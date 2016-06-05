@@ -34,11 +34,23 @@ class DateTimePickerType extends AbstractType
         ));
 
         if ($view->vars['value']) {
-            $value = new \DateTime($view->vars['value']);
-            $view->vars['widget_value'] = $value->format('y-M-d\TH:i:sP');
+            if("Invalid date" == $view->vars['value']) {
+                $view->vars['widget_value'] = null;
+                $view->vars['value'] = null;
+            } else {
+                $value = new \DateTime($view->vars['value']);
+                $view->vars['widget_value'] = $value->format('d.m.Y H:i');//'y-M-d\TH:i:sP');
+                $view->vars['value'] = $value->format('d.m.Y H:i');//'y-M-d\TH:i:sP');
+            }
         }
 
-        $view->vars['widget_format'] = 'YYYY-MM-DDTHH:mm:ssZ';
+        $view->vars['widget_format'] = 'DD.MM.YYYY HH:mm'; //'YYYY-MM-DDTHH:mm:ssZ';
+        // if ($view->vars['value']) {
+        //     $value = new \DateTime($view->vars['value']);
+        //     $view->vars['widget_value'] = $value->format('y-M-d\TH:i:sP');
+        // }
+
+        // $view->vars['widget_format'] = 'YYYY-MM-DDTHH:mm:ssZ';
     }
 
     /**

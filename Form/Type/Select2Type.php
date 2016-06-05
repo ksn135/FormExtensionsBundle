@@ -6,6 +6,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -29,6 +31,13 @@ class Select2Type extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if (true === $options['hidden']) {
+            $builder
+                ->resetViewTransformers()
+                ->addViewTransformer(
+                    new \AppBundle\DataTransformer\EntityToValueTransformer($options['em'], $options['class'])
+                );
+        }
         if ('hidden' === $this->widget && !empty($options['configs']['multiple'])) {
             $builder->addViewTransformer(new ArrayToStringTransformer());
         } elseif ('hidden' === $this->widget && empty($options['configs']['multiple']) && null !== $options['transformer']) {
@@ -75,6 +84,13 @@ class Select2Type extends AbstractType
                     return array_merge($defaults, $configs);
                 },
             ))
+            ->setDefault('choices', function (Options $options, $previousValue) {
+                if (true === $options['hidden']) {
+                    return [];
+                }
+                // Take default value configured in the base class
+                return $previousValue;
+            })
         ;
     }
 

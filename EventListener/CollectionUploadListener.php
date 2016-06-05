@@ -38,8 +38,8 @@ class CollectionUploadListener implements EventSubscriberInterface
 
     /**
      * @param SessionInterface $session
-     * @param Request $request
-     * @param string $routeName
+     * @param Request          $request
+     * @param string           $routeName
      */
     public function __construct(FileStorageInterface $storage, $routeName, PropertyAccessorInterface $propertyAccessor)
     {
@@ -49,7 +49,7 @@ class CollectionUploadListener implements EventSubscriberInterface
     }
 
     /**
-     * @param GetResponseEvent $event
+     * @param  GetResponseEvent $event
      * @return GetResponseEvent
      */
     public function onRequestHandler(GetResponseEvent $event)
@@ -57,7 +57,7 @@ class CollectionUploadListener implements EventSubscriberInterface
         $request = $event->getRequest();
 
         if ($request->attributes->get('_route') == $this->routeName) {
-            if ($request->getMethod()=='POST') {
+            if ($request->getMethod() == 'POST') {
                 if (!$propertyPath = $request->request->get('propertyPath')) {
                     throw new NotFoundHttpException();
                 }
@@ -75,20 +75,20 @@ class CollectionUploadListener implements EventSubscriberInterface
     }
 
     /**
-     * @param string $propertyPath
+     * @param  string $propertyPath
      * @return string
      */
     private function fixPropertyPath($propertyPath)
     {
         if ($propertyPath[0] != '[') {
-            $propertyPath = '[' . substr_replace($propertyPath, ']', strpos($propertyPath, '[')?:strlen($propertyPath), 0);
+            $propertyPath = '['.substr_replace($propertyPath, ']', strpos($propertyPath, '[') ?: strlen($propertyPath), 0);
         }
 
         return str_replace('[]', '', $propertyPath);
     }
 
     /**
-     * @param array $files
+     * @param  array $files
      * @return array
      */
     private function formatResponse(array $files)

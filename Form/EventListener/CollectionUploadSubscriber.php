@@ -9,7 +9,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * @author Piotr Gołębiewski <loostro@gmail.com>
@@ -81,7 +80,7 @@ class CollectionUploadSubscriber implements EventSubscriberInterface
      * Default constructor
      *
      * @param string $propertyName
-     * @param array $options
+     * @param array  $options
      */
     public function __construct($propertyName, array $options, FileStorageInterface $storage = null)
     {
@@ -171,9 +170,10 @@ class CollectionUploadSubscriber implements EventSubscriberInterface
         if ($this->allow_add) {
             // create file entites for each file
             foreach ($this->uploads as $upload) {
+                $editable = array();
+
                 if (!is_object($upload) && !is_null($this->storage)) {
-                    // read submitted editable
-                    $editable = $this->editable[$upload];
+                    $editable = array_key_exists($upload, $this->editable) ? $this->editable[$upload] : array();
                     $upload = $this->storage->getFile($upload);
                 }
 
@@ -189,7 +189,7 @@ class CollectionUploadSubscriber implements EventSubscriberInterface
                 $file->setFile($upload);
                 $file->setParent($data);
 
-                foreach($editable as $editableField => $editableValue) {
+                foreach ($editable as $editableField => $editableValue) {
                     $setEditable = 'set'.ucfirst($editableField);
                     $file->$setEditable($editableValue);
                 }
@@ -239,7 +239,7 @@ class CollectionUploadSubscriber implements EventSubscriberInterface
         // Normalizer-class missing!
         if (!class_exists('\Normalizer')) {
             // remove all non-whitelisted characters
-            return  preg_replace( '@[^a-zA-Z0-9._\-\s ]@u' , "", $original_string );
+            return  preg_replace('@[^a-zA-Z0-9._\-\s ]@u', "", $original_string);
         }
 
         $normalizer = new \Normalizer();
@@ -297,7 +297,7 @@ class CollectionUploadSubscriber implements EventSubscriberInterface
         // possible errors in UTF8-regular-expressions
         if (empty($s)) {
             // remove all non-whitelisted characters
-            return  preg_replace('@[^a-zA-Z0-9._\-\s ]@u' , "", $original_string);
+            return  preg_replace('@[^a-zA-Z0-9._\-\s ]@u', "", $original_string);
         }
 
         // return normalized string
