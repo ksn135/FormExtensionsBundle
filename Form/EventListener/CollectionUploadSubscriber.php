@@ -233,6 +233,8 @@ class CollectionUploadSubscriber implements EventSubscriberInterface
 
     private function normalizeUtf8String($s)
     {
+        return $s; // SKIP NORMALIZATION !!!!
+
         // save original string
         $original_string = $s;
 
